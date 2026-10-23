@@ -1,0 +1,20 @@
+name: Notify search engines
+
+# Vercel reports each deployment back to GitHub; after a successful production deploy,
+# send every sitemap URL to IndexNow so Bing and others re-crawl changed pages quickly.
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+jobs:
+  indexnow:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/indexnow.mjs

@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "en_IN", siteName: "BeeWhat by Vrinda Business Solution", url: "/" },
   twitter: { card: "summary_large_image" },
+  // The subdomain needs its own token when it is a separate URL-prefix property in Search Console.
+  verification: { google: process.env.NEXT_PUBLIC_BEEWHAT_GOOGLE_SITE_VERIFICATION },
 };
 
 export const viewport: Viewport = { themeColor: "#fbfaf6" };

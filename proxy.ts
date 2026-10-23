@@ -13,6 +13,9 @@ function isBeeWhatHost(host: string | null) {
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
+  // The IndexNow key file must be served at the root of both hosts.
+  if (/^\/[0-9a-f]{32}\.txt$/.test(pathname)) return NextResponse.next();
+
   if (isBeeWhatHost(request.headers.get("host"))) {
     if (pathname.startsWith(BEEWHAT_PREFIX)) {
       // Generated metadata images are addressed by their internal path; everything else gets a clean URL.

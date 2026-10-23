@@ -1,6 +1,7 @@
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
 import { getOffering } from "@/lib/catalog";
+import { guidesForProduct } from "@/lib/guides";
 import { ORG_ID, faqLd, organizationLd } from "@/lib/jsonld";
 import { BEEWHAT_URL, SITE_URL, whatsappLink } from "@/lib/site";
 import { ChatToCrm } from "./ChatToCrm";
@@ -91,6 +92,21 @@ export default function BeeWhatHome() {
           <ul className="audience lede" style={{ marginTop: 0 }}>
             {beewhat.audience.map((a) => (
               <li key={a}>{a}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="guides-title">
+        <div className="wrap split">
+          <h2 id="guides-title">Guides for WhatsApp sales teams</h2>
+          <ul className="audience lede" style={{ marginTop: 0 }}>
+            {guidesForProduct("beewhat").map((g) => (
+              <li key={g.slug}>
+                <a className="text-link" href={`${SITE_URL}/guides/${g.slug}`}>
+                  {g.title}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
