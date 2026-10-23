@@ -19,7 +19,10 @@ export const metadata: Metadata = {
   publisher: site.name,
   formatDetection: { telephone: false },
   icons: {
-    icon: [{ url: "/icon.png", type: "image/png", sizes: "512x512" }],
+    icon: [
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
   },
   openGraph: {

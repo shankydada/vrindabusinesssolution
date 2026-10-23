@@ -5,7 +5,7 @@ import { products } from "@/lib/catalog";
 
 type Props = { params: Promise<{ slug: string }> };
 
-// BeeWhat is served from its own subdomain, so it has no page here.
+// BeeWhat runs as its own app on its subdomain, so it has no page here.
 const local = products.filter((p) => !p.externalUrl);
 
 export const dynamicParams = false;

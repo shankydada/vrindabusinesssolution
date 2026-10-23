@@ -3,7 +3,6 @@
 // Usage: node scripts/indexnow.mjs   (run after a production deploy)
 const KEY = "2787078fc4d16f05fbb71a1f71fbea03";
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://vrindabsolution.com").replace(/\/$/, "");
-const BEEWHAT = (process.env.NEXT_PUBLIC_BEEWHAT_URL ?? "https://beewhat.vrindabsolution.com").replace(/\/$/, "");
 
 async function sitemapUrls(origin) {
   const res = await fetch(`${origin}/sitemap.xml`);
@@ -24,7 +23,8 @@ async function submit(origin) {
   if (res.status >= 400) process.exitCode = 1;
 }
 
-for (const origin of [SITE, BEEWHAT]) {
+// BeeWhat runs on Render with its own sitemap; this key is only served by this site.
+for (const origin of [SITE]) {
   try {
     await submit(origin);
   } catch (err) {

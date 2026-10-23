@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { offeringHref, products } from "@/lib/catalog";
 
@@ -27,14 +27,39 @@ function hasWebGL() {
 }
 
 export function TreeHero() {
+  const stage = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<number | null>(null);
   const [touched, setTouched] = useState(false);
   const [canRender, setCanRender] = useState(false);
   const [compact, setCompact] = useState(false);
   const reduce = useReducedMotion() ?? false;
 
+  // Load the 3D scene (three.js) only once the stage is near the screen and the browser is idle,
+  // so it never delays the first paint or blocks taps while the page is loading.
   useEffect(() => {
-    setCanRender(hasWebGL());
+    const el = stage.current;
+    if (!el || !hasWebGL()) return;
+    let idle = 0;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        const start = () => setCanRender(true);
+        const ric = window.requestIdleCallback;
+        idle = typeof ric === "function" ? ric(start, { timeout: 2000 }) : window.setTimeout(start, 1200);
+      },
+      // Phones show the tree below the first screen: wait until it is actually scrolled into view.
+      window.matchMedia("(max-width: 900px)").matches ? { threshold: 0.35 } : { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+      window.clearTimeout(idle);
+    };
+  }, []);
+
+  useEffect(() => {
     const mq = window.matchMedia("(max-width: 600px)");
     const update = () => setCompact(mq.matches);
     update();
@@ -68,16 +93,12 @@ export function TreeHero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-grid">
-        <motion.div
-          className="hero-text"
-          initial={reduce ? false : { opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
+        {/* Text is visible from the first paint; only a CSS slide plays, so it never waits for JavaScript. */}
+        <div className="hero-text hero-enter">
           <h1 id="hero-title">Business software that grows with you</h1>
           <p className="lede">
-            Vrinda Business Solution builds and sets up the systems growing businesses run on: SMARA CRM, BeeWhat
-            WhatsApp CRM, ERP setup, payroll and attendance, workflow automation, AI agents and agentic AI.
+            Vrinda Business Solution builds and sets up the systems growing businesses run on: SMARA CRM, BeeWhat for
+            WhatsApp orders, ERP setup, payroll and attendance, workflow automation, AI agents and agentic AI.
           </p>
           <div className="hero-actions">
             <Link href="/contact" className="btn btn-primary">
@@ -87,10 +108,10 @@ export function TreeHero() {
               Compare Products
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         <div className="hero-tree">
-          <div className="tree-stage">
+          <div className="tree-stage" ref={stage}>
             {canRender ? (
               <TreeScene
                 branches={products.map((p) => ({ label: p.short }))}
@@ -108,9 +129,9 @@ export function TreeHero() {
               {current ? (
                 <motion.div
                   key={current.slug}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
+                  initial={{ y: 6 }}
+                  animate={{ y: 0 }}
+                  exit={{ y: -6 }}
                   transition={{ duration: 0.18 }}
                 >
                   <strong>{current.name}</strong>
@@ -120,7 +141,7 @@ export function TreeHero() {
                   </a>
                 </motion.div>
               ) : (
-                <motion.p key="hint" className="muted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.p key="hint" className="muted">
                   Each branch is a product. Point at one, or tap it, to see what it does and how data flows to it.
                 </motion.p>
               )}

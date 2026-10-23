@@ -892,6 +892,7 @@ textarea.input {
   padding-left: 1.1rem;
   display: grid;
   gap: 0.45rem;
+  align-content: start;
   flex: 1;
 }
 @media (max-width: 900px) {
@@ -963,14 +964,14 @@ textarea.input {
   min-height: 52px;
   padding: 0 1.2rem 0 0.95rem;
   border-radius: 999px;
-  background: #128c7e;
+  background: #0b6e62;
   color: #fff;
   font-weight: 600;
   text-decoration: none;
-  box-shadow: 0 6px 18px rgba(18, 140, 126, 0.3);
+  box-shadow: 0 6px 18px rgba(11, 110, 98, 0.3);
 }
 .wa-button:hover {
-  background: #0e7468;
+  background: #095a50;
 }
 @media (max-width: 600px) {
   .wa-button {
@@ -1157,4 +1158,16 @@ textarea.input {
 }
 .guide-body li::marker {
   color: var(--teal);
+}
+
+/* Hero entrance: transform only, so the text counts as painted immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+@keyframes hero-enter {
+  from {
+    transform: translateY(14px);
+  }
 }

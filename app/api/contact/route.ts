@@ -1,10 +1,32 @@
 import { allOfferings } from "@/lib/catalog";
-import { site } from "@/lib/site";
+import { SITE_URL, site } from "@/lib/site";
 
 // Contact form delivery through Resend (free tier: 3,000 emails a month).
 // Required on Vercel: RESEND_API_KEY. Optional: CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL.
 const RESEND_URL = process.env.RESEND_API_URL ?? "https://api.resend.com/emails";
 const MIN_FILL_MS = 2500;
+const MAX_BODY_BYTES = 16 * 1024;
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
+// Best-effort limit per server instance; add a Vercel Firewall rate-limit rule for /api/contact for a global one.
+const recent = new Map<string, number[]>();
+
+function rateLimited(ip: string) {
+  const now = Date.now();
+  const hits = (recent.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  hits.push(now);
+  recent.set(ip, hits);
+  if (recent.size > 5000) recent.clear();
+  return hits.length > RATE_LIMIT;
+}
+
+// Browsers always send Origin on POST; reject anything not coming from this site.
+function sameSite(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  return origin === new URL(request.url).origin || origin === SITE_URL || origin === SITE_URL.replace("://", "://www.");
+}
 
 type Payload = {
   name?: unknown;
@@ -17,7 +39,11 @@ type Payload = {
   startedAt?: unknown;
 };
 
-const clean = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+// Single-line fields lose control characters (so nothing can add lines to the subject); messages keep line breaks.
+const clean = (v: unknown, max: number) =>
+  typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]+/g, " ").trim().slice(0, max) : "";
+const cleanText = (v: unknown, max: number) =>
+  typeof v === "string" ? v.replace(/[\u0000-\u0009\u000b-\u001f\u007f]+/g, " ").trim().slice(0, max) : "";
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -30,12 +56,23 @@ function topicFor(interest: string) {
 }
 
 export async function POST(request: Request) {
+  if (!sameSite(request)) return Response.json({ error: "Send the form from the website." }, { status: 403 });
+  if (!request.headers.get("content-type")?.includes("application/json"))
+    return Response.json({ error: "Send the form as JSON." }, { status: 415 });
+
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || request.headers.get("x-real-ip") || "unknown";
+  if (rateLimited(ip))
+    return Response.json({ error: "Too many messages in a short time. Try again in a few minutes." }, { status: 429 });
+
   let body: Payload;
   try {
-    body = await request.json();
+    const raw = await request.text();
+    if (raw.length > MAX_BODY_BYTES) return Response.json({ error: "The message is too long." }, { status: 413 });
+    body = JSON.parse(raw);
   } catch {
     return Response.json({ error: "Send the form as JSON." }, { status: 400 });
   }
+  if (!body || typeof body !== "object") return Response.json({ error: "Send the form as JSON." }, { status: 400 });
 
   // Bots fill the hidden field or submit instantly; accept silently so they do not retry.
   const startedAt = typeof body.startedAt === "number" ? body.startedAt : 0;
@@ -47,7 +84,7 @@ export async function POST(request: Request) {
   const company = clean(body.company, 160);
   const phone = clean(body.phone, 40);
   const email = clean(body.email, 200);
-  const message = clean(body.message, 5000);
+  const message = cleanText(body.message, 5000);
   const topic = topicFor(clean(body.interest, 80));
 
   if (!name) return Response.json({ error: "Enter your name so we know who to reply to." }, { status: 400 });
