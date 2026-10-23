@@ -19,6 +19,9 @@ export const site = {
     linkedin: "https://www.linkedin.com/company/vrindabusinesssolutions",
     youtube: "https://www.youtube.com/@VrindaBusinessSolutions",
   },
+  // Add each listing's URL as it goes live (Google Business Profile, Clutch, GoodFirms, G2, Capterra,
+  // IndiaMART, JustDial). They are published as sameAs links, which tie your profiles to one business.
+  profiles: [] as string[],
 } as const;
 
 export function absoluteUrl(path = "/") {

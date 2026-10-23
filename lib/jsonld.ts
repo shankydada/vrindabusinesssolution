@@ -18,7 +18,7 @@ export function organizationLd() {
     telephone: site.phoneE164,
     address: { "@type": "PostalAddress", addressCountry: site.countryCode },
     areaServed: [{ "@type": "Country", name: site.country }, "Worldwide"],
-    sameAs: [site.social.linkedin, site.social.youtube],
+    sameAs: [site.social.linkedin, site.social.youtube, ...site.profiles],
     contactPoint: {
       "@type": "ContactPoint",
       telephone: site.phoneE164,
@@ -134,5 +134,24 @@ export function itemListLd(name: string, items: Offering[]) {
         url: href.startsWith("http") ? href : absoluteUrl(href),
       };
     }),
+  };
+}
+
+export function articleLd(g: { title: string; description: string; slug: string; published: string; updated: string; keywords: string[] }) {
+  const url = absoluteUrl(`/guides/${g.slug}`);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${url}#article`,
+    headline: g.title,
+    description: g.description,
+    url,
+    mainEntityOfPage: url,
+    datePublished: g.published,
+    dateModified: g.updated,
+    inLanguage: "en-IN",
+    keywords: g.keywords.join(", "),
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
   };
 }

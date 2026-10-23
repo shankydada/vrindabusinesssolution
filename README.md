@@ -37,6 +37,7 @@ Optional environment variables (**Project → Settings → Environment Variables
 | `NEXT_PUBLIC_BEEWHAT_URL` | BeeWhat URL. Defaults to `https://beewhat.vrindabsolution.com` |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console HTML-tag verification code |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools verification code |
+| `NEXT_PUBLIC_BEEWHAT_GOOGLE_SITE_VERIFICATION` | Search Console code for a separate `https://beewhat.vrindabsolution.com/` URL-prefix property (not needed with a Domain property) |
 | `RESEND_API_KEY` | **Required for the contact form.** API key from Resend |
 | `CONTACT_TO_EMAIL` | Inbox that receives enquiries. Defaults to `contact@vrindabsolution.com` |
 | `CONTACT_FROM_EMAIL` | Sender address, once your domain is verified in Resend, e.g. `Vrinda Website <website@vrindabsolution.com>` |
@@ -67,14 +68,25 @@ subdomain so search engines see one URL per page.
 ## After launch: getting found
 
 The site ships with per-page titles and descriptions, canonical URLs, Open Graph images, JSON-LD structured data
-(Organization, SoftwareApplication, Service, FAQPage, BreadcrumbList), sitemaps, and an `llms.txt` summary for AI
-assistants. Search engines still need to be told the site exists:
+(Organization, SoftwareApplication, Service, Article, FAQPage, BreadcrumbList), sitemaps for both domains, an
+`llms.txt` summary for AI assistants, and a Guides section (`lib/guides.ts`) that answers common buyer questions.
 
-1. **Google Search Console**: add a *Domain* property for `vrindabsolution.com` (DNS verification covers the BeeWhat
-   subdomain). Submit `https://vrindabsolution.com/sitemap.xml` and `https://beewhat.vrindabsolution.com/sitemap.xml`.
-2. **Bing Webmaster Tools**: import from Search Console. Bing's index also feeds Microsoft Copilot and ChatGPT search.
-3. **Google Business Profile**: create or claim the business listing with your address, phone and category
-   ("Software company"). This drives local and map results.
-4. **Reviews and listings**: real client reviews on Google, plus listings on Clutch, GoodFirms, G2 or Capterra,
-   are what search engines and AI assistants weigh most when recommending a provider.
-5. Keep `lib/catalog.ts` accurate; FAQs written as real questions are what assistants quote.
+1. **Google Search Console**
+   - A *Domain* property (verified by DNS, shown as `vrindabsolution.com`) already covers BeeWhat. Submit both
+     `https://vrindabsolution.com/sitemap.xml` and `https://beewhat.vrindabsolution.com/sitemap.xml` inside it.
+   - A *URL-prefix* property (`https://vrindabsolution.com/`) does not cover BeeWhat. Add a second URL-prefix
+     property for `https://beewhat.vrindabsolution.com/`, verify it with the HTML tag method by setting
+     `NEXT_PUBLIC_BEEWHAT_GOOGLE_SITE_VERIFICATION`, and submit its sitemap there.
+   - Use **URL Inspection → Request indexing** for the home page, each product page and each guide.
+2. **Bing Webmaster Tools**: import from Search Console. Bing's index also feeds ChatGPT search and Microsoft Copilot.
+3. **IndexNow** (Bing, Yandex and others): `.github/workflows/indexnow.yml` runs `scripts/indexnow.mjs` after every
+   successful Vercel production deploy and submits all sitemap URLs. Run it by hand with `npm run indexnow`. The key
+   file is `public/2787078fc4d16f05fbb71a1f71fbea03.txt`.
+4. **Vercel Analytics and Speed Insights**: switch both on under **Project → Analytics** and **Project → Speed
+   Insights**. The site already includes them.
+5. **Google Business Profile**: create or claim the listing with your phone, hours, category ("Software company")
+   and products. Post updates and photos regularly.
+6. **Reviews and listings**: real client reviews on Google, and listings on Clutch, GoodFirms, G2, Capterra,
+   IndiaMART and JustDial. Add each listing URL to `site.profiles` in `lib/site.ts` so the structured data links them.
+7. **Content**: add guides to `lib/guides.ts` (one or two a month). Each one is added to the sitemap, `llms.txt`,
+   the Guides page and the related product pages automatically.

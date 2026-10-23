@@ -10,6 +10,7 @@ import { offeringHref, products, services } from "@/lib/catalog";
 const links = [
   { href: "/products", label: "Products" },
   { href: "/services", label: "Services" },
+  { href: "/guides", label: "Guides" },
   { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
 ];
@@ -103,6 +104,9 @@ export function SiteHeader() {
                     </li>
                   ))}
                 </ul>
+              </li>
+              <li>
+                <Link href="/guides">Guides</Link>
               </li>
               <li>
                 <Link href="/pricing">Pricing</Link>

@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { OfferList } from "@/components/OfferList";
 import type { Offering } from "@/lib/catalog";
 import { getOffering } from "@/lib/catalog";
+import { guidesForProduct } from "@/lib/guides";
 import { breadcrumbLd, faqLd, offeringLd } from "@/lib/jsonld";
 import { whatsappLink } from "@/lib/site";
 
@@ -28,7 +29,7 @@ export function OfferingPage({ offering: o }: { offering: Offering }) {
               <p className="lede">{o.intro}</p>
               <div className="hero-actions">
                 <Link href={`/contact?interest=${o.slug}`} className="btn btn-primary">
-                  Book a {o.short} Demo
+                  Book a Free Demo
                 </Link>
                 <a
                   href={whatsappLink(`Hi, I'd like to know more about ${o.name}.`)}
@@ -103,6 +104,25 @@ export function OfferingPage({ offering: o }: { offering: Offering }) {
           <Faq items={o.faqs} />
         </div>
       </section>
+
+      {guidesForProduct(o.slug).length > 0 && (
+        <section className="section" aria-labelledby="guides-title">
+          <div className="wrap">
+            <h2 id="guides-title" style={{ marginBottom: "2rem" }}>
+              Guides on this topic
+            </h2>
+            <div className="cells" style={{ "--cols": 2 } as React.CSSProperties}>
+              {guidesForProduct(o.slug).map((g) => (
+                <Link key={g.slug} href={`/guides/${g.slug}`} className="cell-link">
+                  <h3>{g.title}</h3>
+                  <p>{g.description}</p>
+                  <span className="cell-go">Read the guide</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="section" aria-labelledby="related-title">
