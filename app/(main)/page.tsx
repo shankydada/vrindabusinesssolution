@@ -15,9 +15,9 @@ export const metadata: Metadata = {
 };
 
 const story = [
-  { title: "A customer asks on WhatsApp", body: "BeeWhat saves the chat to SMARA CRM and creates the lead. Nobody types anything." },
-  { title: "An AI agent replies", body: "It answers the price question from your catalogue and books a call with sales." },
-  { title: "The deal closes", body: "Workflow automation raises the invoice in your ERP and updates stock." },
+  { title: "A customer asks on WhatsApp", body: "BeeWhat records the enquiry as an order and sends a GST quote, right inside the chat." },
+  { title: "An AI agent replies after hours", body: "It answers the price question from your catalogue and books a call with sales." },
+  { title: "The order ships", body: "Your ERP updates stock and accounts, and workflow automation keeps the numbers in sync." },
   { title: "Month end arrives", body: "Payroll pays the salesperson's incentive from the same numbers, with attendance already in." },
 ];
 

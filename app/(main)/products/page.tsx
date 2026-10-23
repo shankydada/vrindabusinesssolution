@@ -8,7 +8,7 @@ import { breadcrumbLd, itemListLd } from "@/lib/jsonld";
 
 const title = "Products: CRM, WhatsApp CRM, ERP, Payroll, Automation & AI";
 const description =
-  "Compare products from Vrinda Business Solution: SMARA CRM, BeeWhat WhatsApp CRM, ERP setup, payroll & attendance, workflow automation, AI agents, agentic AI and VrindaCRM Pro.";
+  "Compare products from Vrinda Business Solution: SMARA CRM, BeeWhat for WhatsApp orders and invoices, ERP setup, payroll & attendance, workflow automation, AI agents, agentic AI and VrindaCRM Pro.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -23,7 +23,7 @@ const crumbs = [
 ];
 
 const guide = [
-  { need: "Leads are lost on WhatsApp", pick: "BeeWhat with SMARA CRM" },
+  { need: "Orders and payments get lost in WhatsApp chats", pick: "BeeWhat" },
   { need: "Sales follow-ups depend on memory", pick: "SMARA CRM" },
   { need: "Sales process no CRM can model", pick: "VrindaCRM Pro" },
   { need: "Stock, invoices and accounts do not agree", pick: "ERP Setup" },

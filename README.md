@@ -1,7 +1,8 @@
 # Vrinda Business Solution website
 
-Next.js 16 site for [vrindabsolution.com](https://vrindabsolution.com), plus the BeeWhat product site on
-[beewhat.vrindabsolution.com](https://beewhat.vrindabsolution.com). Both are served by one Vercel project.
+Next.js 16 site for [vrindabsolution.com](https://vrindabsolution.com), hosted on Vercel. BeeWhat
+([beewhat.vrindabsolution.com](https://beewhat.vrindabsolution.com)) is a separate app (`shankydada/BeeWhat`) hosted
+on Render; this site links to it and `/products/beewhat` redirects there.
 
 - 3D hero: React Three Fiber (`components/tree/`), the Vrinda tree with one branch per product
 - Motion: framer-motion (respects the visitor's reduced-motion setting)
@@ -13,7 +14,6 @@ Next.js 16 site for [vrindabsolution.com](https://vrindabsolution.com), plus the
 ```bash
 npm install
 npm run dev          # http://localhost:3000
-                     # BeeWhat site: http://beewhat.localhost:3000
 npm run build        # production build
 npm run typecheck
 ```
@@ -22,10 +22,11 @@ npm run typecheck
 
 1. In Vercel, **Add New → Project** and import this GitHub repository. Framework preset: Next.js. No build settings
    need changing.
-2. In **Project → Settings → Domains**, add all three to the same project:
+2. In **Project → Settings → Domains**, add:
    - `vrindabsolution.com`
    - `www.vrindabsolution.com`, set to redirect to `vrindabsolution.com`
-   - `beewhat.vrindabsolution.com`
+
+   `beewhat.vrindabsolution.com` points to Render (a CNAME to the BeeWhat service), not to Vercel.
 3. At your domain registrar, replace the old GitHub Pages DNS records with the records Vercel shows for each domain.
 4. Once the site loads from Vercel, turn off GitHub Pages in the repository settings (**Settings → Pages**).
 
@@ -37,7 +38,6 @@ Optional environment variables (**Project → Settings → Environment Variables
 | `NEXT_PUBLIC_BEEWHAT_URL` | BeeWhat URL. Defaults to `https://beewhat.vrindabsolution.com` |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console HTML-tag verification code |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools verification code |
-| `NEXT_PUBLIC_BEEWHAT_GOOGLE_SITE_VERIFICATION` | Search Console code for a separate `https://beewhat.vrindabsolution.com/` URL-prefix property (not needed with a Domain property) |
 | `RESEND_API_KEY` | **Required for the contact form.** API key from Resend |
 | `CONTACT_TO_EMAIL` | Inbox that receives enquiries. Defaults to `contact@vrindabsolution.com` |
 | `CONTACT_FROM_EMAIL` | Sender address, once your domain is verified in Resend, e.g. `Vrinda Website <website@vrindabsolution.com>` |
@@ -59,11 +59,13 @@ most bots.
 
 If email is not configured or fails, the form tells the visitor and offers WhatsApp instead.
 
-### How the BeeWhat subdomain works
+### Security
 
-`proxy.ts` checks the host. Requests to `beewhat.*` are rewritten to the internal `app/beewhat-site/` route, which
-has its own layout, sitemap, robots.txt and llms.txt. On the main domain, `/products/beewhat` redirects to the
-subdomain so search engines see one URL per page.
+`next.config.ts` sends a Content Security Policy, HSTS, `X-Frame-Options: DENY`, `Cross-Origin-Opener-Policy`,
+`Permissions-Policy`, `nosniff` and a strict referrer policy on every response. The contact API accepts only
+same-site JSON requests up to 16 KB, filters bots, and rate-limits each visitor (per server instance; for a
+global limit add a Vercel Firewall rate-limit rule for `/api/contact`). `public/.well-known/security.txt` tells
+researchers how to report issues; renew its `Expires` date every year. Dependabot opens weekly update PRs.
 
 ## After launch: getting found
 
@@ -72,15 +74,12 @@ The site ships with per-page titles and descriptions, canonical URLs, Open Graph
 `llms.txt` summary for AI assistants, and a Guides section (`lib/guides.ts`) that answers common buyer questions.
 
 1. **Google Search Console**
-   - A *Domain* property (verified by DNS, shown as `vrindabsolution.com`) already covers BeeWhat. Submit both
-     `https://vrindabsolution.com/sitemap.xml` and `https://beewhat.vrindabsolution.com/sitemap.xml` inside it.
-   - A *URL-prefix* property (`https://vrindabsolution.com/`) does not cover BeeWhat. Add a second URL-prefix
-     property for `https://beewhat.vrindabsolution.com/`, verify it with the HTML tag method by setting
-     `NEXT_PUBLIC_BEEWHAT_GOOGLE_SITE_VERIFICATION`, and submit its sitemap there.
+   - Submit `https://vrindabsolution.com/sitemap.xml`. BeeWhat's sitemap comes from the BeeWhat app on Render
+     (`https://beewhat.vrindabsolution.com/sitemap.xml`); its addresses follow that app's `WEB_ORIGIN` setting.
    - Use **URL Inspection → Request indexing** for the home page, each product page and each guide.
 2. **Bing Webmaster Tools**: import from Search Console. Bing's index also feeds ChatGPT search and Microsoft Copilot.
 3. **IndexNow** (Bing, Yandex and others): `.github/workflows/indexnow.yml` runs `scripts/indexnow.mjs` after every
-   successful Vercel production deploy and submits all sitemap URLs. Run it by hand with `npm run indexnow`. The key
+   successful Vercel production deploy and submits this site's sitemap URLs. Run it by hand with `npm run indexnow`. The key
    file is `public/2787078fc4d16f05fbb71a1f71fbea03.txt`.
 4. **Vercel Analytics and Speed Insights**: switch both on under **Project → Analytics** and **Project → Speed
    Insights**. The site already includes them.

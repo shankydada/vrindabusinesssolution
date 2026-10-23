@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div>
             <p style={{ fontFamily: "var(--font-display)", fontWeight: 650, fontSize: "1.15rem" }}>{site.name}</p>
             <p className="muted" style={{ marginTop: "0.6rem", maxWidth: "36ch" }}>
-              Business software for growing companies: CRM, WhatsApp CRM, ERP, payroll, workflow automation and AI
+              Business software for growing companies: CRM, WhatsApp orders, ERP, payroll, workflow automation and AI
               agents. Based in India, working worldwide.
             </p>
             <address style={{ fontStyle: "normal", marginTop: "1.25rem", display: "grid", gap: "0.3rem" }}>

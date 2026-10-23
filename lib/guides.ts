@@ -66,16 +66,18 @@ export const guides: Guide[] = [
         heading: "How BeeWhat handles it",
         ordered: true,
         list: [
-          "Connect your business WhatsApp number to BeeWhat.",
-          "Messages flow into the CRM, matched to existing contacts or saved as new ones.",
-          "Your team works from the CRM with the full chat history in front of them.",
+          "Connect your WhatsApp by logging in with Facebook. You keep using the WhatsApp Business app on your phone with the same number.",
+          "Every enquiry is recorded on the customer's history, and you can bring in up to six months of past chats when you connect.",
+          "Quick replies such as /quote and /confirm turn the conversation into an order with GST quotes, invoices, payment checks and follow-ups.",
         ],
-        paragraphs: ["BeeWhat works with SMARA CRM directly, and with other CRMs through workflow automation."],
+        paragraphs: [
+          "BeeWhat is built for Indian manufacturers who sell on WhatsApp, and you can export everything to Excel at any time. It has a free 14-day trial.",
+        ],
       },
     ],
     faqs: [
       { q: "Can I export WhatsApp chats to Excel?", a: "WhatsApp's Export Chat feature saves a single conversation as a text file, which you can paste into a spreadsheet. It is manual and one chat at a time, so it does not suit daily sales work." },
-      { q: "Do salespeople need to change how they use WhatsApp?", a: "Not with a zero-touch WhatsApp CRM such as BeeWhat. They keep chatting with customers as usual and the messages are recorded in the background." },
+      { q: "Do salespeople need to change how they use WhatsApp?", a: "Not with a tool such as BeeWhat that works alongside the WhatsApp Business app. They keep chatting with customers as usual and the messages are recorded in the background." },
       { q: "Is it okay to store customer chats in a CRM?", a: "Business conversations are normal business records, but treat them as personal data: collect only what you need, tell customers how you use it, restrict access and keep it secure, in line with India's Digital Personal Data Protection Act." },
     ],
   },

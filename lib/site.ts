@@ -7,7 +7,7 @@ export const site = {
   alternateNames: ["VrindaBusinessSolutions", "Vrinda Business Solutions", "VBS"],
   tagline: "CRM, ERP, payroll, workflow automation and AI agents for growing businesses",
   description:
-    "Vrinda Business Solution builds and sets up business software for growing companies in India: SMARA CRM, BeeWhat WhatsApp CRM, ERP setup, payroll & attendance, workflow automation, AI agents and agentic AI.",
+    "Vrinda Business Solution builds and sets up business software for growing companies in India: SMARA CRM, BeeWhat for WhatsApp orders and invoices, ERP setup, payroll & attendance, workflow automation, AI agents and agentic AI.",
   email: "contact@vrindabsolution.com",
   phone: "+91 88829 84274",
   phoneE164: "+918882984274",
