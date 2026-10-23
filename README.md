@@ -37,6 +37,26 @@ Optional environment variables (**Project → Settings → Environment Variables
 | `NEXT_PUBLIC_BEEWHAT_URL` | BeeWhat URL. Defaults to `https://beewhat.vrindabsolution.com` |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console HTML-tag verification code |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools verification code |
+| `RESEND_API_KEY` | **Required for the contact form.** API key from Resend |
+| `CONTACT_TO_EMAIL` | Inbox that receives enquiries. Defaults to `contact@vrindabsolution.com` |
+| `CONTACT_FROM_EMAIL` | Sender address, once your domain is verified in Resend, e.g. `Vrinda Website <website@vrindabsolution.com>` |
+
+### Contact form email (Resend free tier)
+
+The contact form posts to `app/api/contact/route.ts`, which emails each enquiry through
+[Resend](https://resend.com) (free tier: 3,000 emails a month, 100 a day). The visitor's email is set as reply-to,
+so you can answer with your mail app's Reply button. A hidden spam-trap field and a minimum fill time filter out
+most bots.
+
+1. Sign up at resend.com and create an API key with "Sending access".
+2. In Vercel, add `RESEND_API_KEY` and redeploy.
+3. **Quick start:** without a verified domain, Resend only delivers to the email address you signed up with, so
+   set `CONTACT_TO_EMAIL` to that address.
+4. **Recommended:** in Resend, go to **Domains → Add Domain**, add `vrindabsolution.com` and create the DNS records
+   it lists at your DNS provider. Once it shows Verified, set `CONTACT_FROM_EMAIL` to an address on your domain
+   and `CONTACT_TO_EMAIL` to any inbox you like.
+
+If email is not configured or fails, the form tells the visitor and offers WhatsApp instead.
 
 ### How the BeeWhat subdomain works
 
