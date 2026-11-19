@@ -22,5 +22,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page("/pricing", 0.6),
     page("/about", 0.5),
     page("/contact", 0.6),
+    page("/privacy", 0.3),
+    page("/terms", 0.3),
+    page("/data-deletion", 0.3),
   ];
 }
