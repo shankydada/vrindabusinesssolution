@@ -70,6 +70,11 @@ export function SiteFooter() {
           <span>
             © {new Date().getFullYear()} {site.name}
           </span>
+          <nav aria-label="Legal" className="footer-legal">
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Use</Link>
+            <Link href="/data-deletion">Data Deletion</Link>
+          </nav>
           <span>{site.hours}</span>
         </div>
       </div>

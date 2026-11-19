@@ -174,7 +174,15 @@ export function ContactForm() {
       <p className={status.kind === "error" ? "field-error" : "form-note"} role={status.kind === "error" ? "alert" : undefined}>
         {status.kind === "error"
           ? `${status.message} Please use “Send on WhatsApp Instead”, or call us.`
-          : "Your message goes straight to our team's inbox."}
+          : (
+            <>
+              Your message goes straight to our team&apos;s inbox. See how we handle it in our{" "}
+              <a className="text-link" href="/privacy">
+                Privacy Policy
+              </a>
+              .
+            </>
+          )}
       </p>
     </form>
   );

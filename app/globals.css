@@ -1171,3 +1171,17 @@ textarea.input {
     transform: translateY(14px);
   }
 }
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+}
+.footer-legal a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.footer-legal a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
